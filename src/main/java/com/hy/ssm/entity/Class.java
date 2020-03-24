@@ -3,6 +3,16 @@ package com.hy.ssm.entity;
 public class Class {
     private  String name;
     private  String  deptno;
+    private int age;
+    private Integer pass;
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
 
     public String getName() {
         return name;
