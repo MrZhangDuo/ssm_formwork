@@ -5,6 +5,7 @@ public class Class {
     private  String  deptno;
     private int age;
     private Integer pass;
+    private String user;
 
     public int getAge() {
         return age;
