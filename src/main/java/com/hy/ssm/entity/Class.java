@@ -2,6 +2,7 @@ package com.hy.ssm.entity;
 
 public class Class {
     private  String name;
+    private int book;
     private  String  deptno;
     private int age;
     private Integer pass;
