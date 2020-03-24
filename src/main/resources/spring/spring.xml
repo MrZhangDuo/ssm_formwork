@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+                http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+<!--    1、引入jdbc properties 文件
+        2、引入阿里巴巴DruidDataSource数据源
+        3、引入SessionFactoryBean工厂 如:("com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean" 、"org.mybatis.spring.SqlSessionFactoryBean")
+                如果是mybatis-plus 需要加载 mybatis主配置文件("configLocation")、批量设置mybatis bean别名("typeAliasesPackage")
+        4、spring 批量扫描 Mybatis Mapper 接口("org.mybatis.spring.mapper.MapperScannerConfigurer")
+            用了批量扫描以后，Mybatis.xml(主配置文件)里面不需要加载mapper.xml
+        5、开启事务管理器("DataSourceTransactionManager")
+        6、开启事务注解扫描("tx:annotation-driven")
+-->
+
+    <!-- 引入jdbc properties 文件 -->
+    <context:property-placeholder location="classpath:properties/jdbc.properties"></context:property-placeholder>
+
+    <!-- 引入阿里巴巴DruidDataSource数据源 com.alibaba.druid.pool.DruidDataSource-->
+    <bean id="druidDataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${driverClass}"></property>
+        <property name="url" value="${jdbcURL}"></property>
+        <property name="username" value="${username}"></property>
+        <property name="password" value="${password}"></property>
+    </bean>
+
+    <!-- 引入SessionFactoryBean工厂 如:("com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean" 、"org.mybatis.spring.SqlSessionFactoryBean")
+             引入datasource 数据源
+                如果是mybatis-plus 需要加载 mybatis主配置文件("configLocation")、批量设置mybatis bean别名("typeAliasesPackage") -->
+    <bean id="mybatisSqlSessionFactoryBean" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
+        <property name="dataSource" ref="druidDataSource"></property>
+        <property name="configLocation" value="classpath:mybatis/mybatis.xml"></property>
+        <property name="typeAliasesPackage" value="com.hy.ssm"></property>
+        <property name="plugins">
+            <array>
+                <bean id="interceptor" class="com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor"><!-- mybatis plus 自带的分页插件--> </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!-- spring 批量扫描 Mybatis Mapper 接口("org.mybatis.spring.mapper.MapperScannerConfigurer") -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="mybatisSqlSessionFactoryBean"></property>
+       <!-- <property name="basePackage" value="com.hy.ssm"></property>-->
+    </bean>
+
+    <!-- 开启事务管理器("org.springframework.jdbc.datasource.DataSourceTransactionManager")-->
+    <bean id="dataSourceTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"></bean>
+
+    <!-- 开启事务注解扫描("tx:annotation-driven") -->
+    <tx:annotation-driven transaction-manager="dataSourceTransactionManager"></tx:annotation-driven>
+</beans>
