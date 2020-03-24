@@ -6,6 +6,7 @@ public class Class {
     private int age;
     private Integer pass;
     private String user;
+    private String a;
 
     public int getAge() {
         return age;
